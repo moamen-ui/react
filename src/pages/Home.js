@@ -30,7 +30,7 @@ class Home extends React.Component {
 
   shelfBooks(shelf, books) {
     this.setState({
-      shelfs: shelfTitle.map(shelf => {
+      shelfs: shelf.map(shelf => {
         let obj = {}
         obj['title'] = shelf
         obj['books'] = books.filter(book => shelf === book.shelf)
