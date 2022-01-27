@@ -3,7 +3,9 @@ import {
   Routes,
   Route
 } from "react-router-dom"
-// import * as BooksAPI from './BooksAPI'
+
+import * as BooksAPI from './BooksAPI'
+import Service from './Service'
 import './App.css'
 
 
@@ -14,23 +16,46 @@ import {Home, Search} from './pages'
 
 class BooksApp extends React.Component {
   state = {
-    /**
-     * TODO: Instead of using this state variable to keep track of which page
-     * we're on, use the URL in the browser's address bar. This will ensure that
-     * users can use the browser's back and forward buttons to navigate between
-     * pages, as well as provide a good URL they can bookmark and share.
-     */
-    showSearchPage: false
+    shelfs: []
+  }
+  componentDidMount() {
+    this.shelfBooks()
+  }
+
+  shelfBooks = async () => {
+
+    await BooksAPI.getAll().then(books => {
+
+      let shelfTitle = [
+        ...new Set(books.map(book => book.shelf))
+      ];
+
+      this.setState({
+        shelfs: shelfTitle.map(shelf => {
+          let obj = {}
+          obj['title'] = shelf
+          obj['books'] = books.filter(book => shelf === book.shelf)
+          return obj
+          })
+        });
+    })
+  }
+
+  updateBook = async (bookID, shelfTitle) => {
+    const updatedBooks = await BooksAPI.update(bookID, shelfTitle).then(res => {
+      this.shelfBooks()
+    })
   }
 
   render() {
     return (
       <div className="app">
-        <Routes>
-          <Route exact path={'/'} element={<Home/>} />
-          <Route exact path={'/search'} element={<Search/>} />
-        </Routes>
-        
+        <Service.Provider value={{'shelfs': this.state.shelfs, 'updateBook': this.updateBook }}>
+          <Routes>
+            <Route exact path={'/'} element={<Home shelf={this.state.shelfs}/>} />
+            <Route exact path={'/search'} element={<Search shelf={this.state.shelfs}/>} />
+          </Routes>
+        </Service.Provider>
       </div>
     )
   }
