@@ -11,8 +11,6 @@ import './App.css'
 
 import {Home, Search} from './pages'
 
-// import Search from './pages/Search'
-// import Home from './pages/Home'
 
 class BooksApp extends React.Component {
   state = {
@@ -37,7 +35,7 @@ class BooksApp extends React.Component {
           obj['books'] = books.filter(book => shelf === book.shelf)
           return obj
           })
-        });
+        })
     })
   }
 

@@ -5,12 +5,10 @@ import Service from '../Service';
 
 class Book extends React.Component {
 
-  componentDidMount() {
-    const {shelf} = this.props;
-  }
+  
   render() {
-    const {book, shelf} = this.props;
-    const myFun = this.context.updateBook;
+    let {book, shelf} = this.props
+    shelf = shelf || this.context.shelfs.map(s => s.books.some(b => b.id == book.id) && s.title).find(i => i)
     const image = book.imageLinks ? book.imageLinks.thumbnail : 'https://via.placeholder.com/128x193';
 
     return (

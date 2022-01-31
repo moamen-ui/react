@@ -2,18 +2,30 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import * as BooksAPI from '../BooksAPI'
 import { Book } from '../components'
-
+import Service from '../Service';
 class Search extends React.Component {
   state = {
-    books: []
+    books: [],
   }
 
   searchBooks(keyword) {
+    
+    if(keyword.trim().length <= 0) {
+      this.setState({books: []})
+      return 
+    }
     BooksAPI.search(keyword).then(list => {
+      if (list.error) {
+        this.setState({books: []})
+        return
+      }
       this.setState({
         books: list
       })
-    }).catch(err => this.setState({books: []}))
+    }).catch(err => {
+      console.log(err);
+      this.setState({books: []})
+    })
   }
 
   render() {
@@ -34,5 +46,5 @@ class Search extends React.Component {
     )
   }
 }
-
+Search.contextType = Service
 export default Search
